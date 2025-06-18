@@ -4,23 +4,37 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Grade;
+use App\Models\Enrollment;
+use Illuminate\Support\Facades\Auth;
 
 class GradeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+    public function index() {}
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'enrollment_id' => 'required|exists:enrollments,id',
+            'description' => 'required|string|max:255',
+            'grade' => 'required|numeric|min:0|max:5',
+        ]);
+
+        $enrollment = Enrollment::find($validatedData['enrollment_id']);
+
+        if (Auth::id() !== $enrollment->course->teacher_id) {
+            return response()->json(['message' => 'No autorizado para calificar en este curso.'], 403);
+        }
+
+        $grade = Grade::create($validatedData);
+
+        return response()->json($grade, 201);
     }
 
     /**

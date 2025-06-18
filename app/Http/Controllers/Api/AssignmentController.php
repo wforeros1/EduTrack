@@ -3,47 +3,28 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Assignment;
 use Illuminate\Http\Request;
 
 class AssignmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function index(Request $request)
     {
-        //
-    }
+        $student = $request->user();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $student->load('role', 'enrollments');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($student->role->role_name !== 'Estudiante') {
+            return response()->json(['message' => 'Acceso no autorizado para este rol.'], 403);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $enrolledCourseIds = $student->enrollments->pluck('course_id');
+
+        $assignments = Assignment::whereIn('course_id', $enrolledCourseIds)
+            ->orderBy('due_date', 'asc') 
+            ->get();
+
+        return response()->json($assignments);
     }
 }
