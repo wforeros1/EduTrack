@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
 
 class UserSeeder extends Seeder
 {
@@ -65,6 +67,17 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+
+
         ]);
+        $student = User::where('email', 'estudiante.carlos@edutrack.com')->first();
+        $parent = User::where('email', 'padre.maria@edutrack.com')->first();
+
+        if ($student && $parent) {
+            DB::table('parent_student')->insert([
+                'parent_id' => $parent->id,
+                'student_id' => $student->id,
+            ]);
+        }
     }
 }

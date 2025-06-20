@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             EnrollmentSeeder::class,
             AssignmentSeeder::class,
+            ScheduleEventSeeder::class,
         ]);
     }
 }

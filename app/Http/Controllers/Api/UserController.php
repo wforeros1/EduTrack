@@ -4,15 +4,22 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->user()->role->role_name !== 'Administrador') {
+            return response()->json(['message' => 'Acceso no autorizado.'], 403);
+        }
+
+        $users = User::with('role')->get();
+
+        return response()->json($users, 200);
     }
 
     /**
@@ -34,9 +41,22 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updateRole(Request $request, string $id)
     {
-        //
+        if ($request->user()->role->role_name !== 'Administrador') {
+            return response()->json(['message' => 'Acceso no autorizado.'], 403);
+        }
+
+        $validatedData = $request->validate([
+            'role_id' => 'required|exists:roles,id'
+        ]);
+
+        $userToUpdate = User::findOrFail($id);
+        $userToUpdate->role_id = $validatedData['role_id'];
+        $userToUpdate->save();
+
+        $userToUpdate->load('role');
+        return response()->json($userToUpdate, 200);
     }
 
     /**

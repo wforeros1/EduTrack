@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('schedule_events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->text('description')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();	
+            $table->foreignId('course_id')->nullable()->constrained('courses')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

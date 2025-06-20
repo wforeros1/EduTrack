@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Grade;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\Auth;
+use App\Events\GradeCreated;
 
 class GradeController extends Controller
 {
@@ -33,6 +34,8 @@ class GradeController extends Controller
         }
 
         $grade = Grade::create($validatedData);
+
+        GradeCreated::dispatch($grade);
 
         return response()->json($grade, 201);
     }
