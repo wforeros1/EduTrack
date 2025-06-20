@@ -15,14 +15,13 @@ class CourseController extends Controller
     {
         $user = $request->user();
 
-        $user->load('role'); 
+        $user->load('role');
 
         if ($user->role->role_name !== 'Docente') {
             return response()->json(['message' => 'Acceso no autorizado para este rol.'], 403);
         }
 
-        $courses = $user->courses;
-
+        $courses = $user->courses()->with('enrollments.student')->get();
         return response()->json($courses, 200);
     }
 

@@ -10,10 +10,23 @@ class NotificationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = $request->user();
+        $user->load('role');
+
+        // 1. Autorización: ¿Es un padre?
+        if ($user->role->role_name !== 'Padre') {
+            return response()->json(['message' => 'Acceso no autorizado para este rol.'], 403);
+        }
+
+        // 2. Acción: Obtenemos las notificaciones de este usuario, ordenadas por la más reciente
+        $notifications = $user->notifications()->orderBy('created_at', 'desc')->get();
+
+        // 3. Respuesta: Devolvemos las notificaciones
+        return response()->json($notifications);
     }
+    
 
     /**
      * Store a newly created resource in storage.

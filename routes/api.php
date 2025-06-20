@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ScheduleEventController;
 use App\Http\Controllers\Api\EnrollmentController;
+use App\Http\Controllers\Api\NotificationController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/institution', [InstitutionController::class, 'index']);
@@ -25,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::put('/users/{id}/role', [UserController::class, 'updateRole']);
     Route::get('/schedule', [ScheduleEventController::class, 'index']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/enrollments/{id}/report-card', [EnrollmentController::class, 'generateGradeReport']);
     
 });
